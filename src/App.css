@@ -1,0 +1,497 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%; /* Sets default font size to 10px */
+}
+
+body {
+  background: rgb(3, 0, 31);
+  color: white;
+  font-family: 'Poppins', sans-serif;
+  overflow: hidden; /* Prevents scrolling on the body */
+}
+
+.App {
+  min-height: 90vh;
+  display: flex;
+}
+
+.sideBar {
+  width: 30rem; /* Set fixed width for sidebar */
+  border-right: 1px solid rgb(100, 100, 100);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh; /* Ensure sidebar takes full height */
+}
+
+.main {
+  flex: 1; /* Use flex-grow to fill the remaining space */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 3rem 3rem;
+  margin-bottom: 0;
+  min-height: calc(100vh - 10rem);
+  overflow-y: auto; /* Make main content scrollable */
+}
+
+.logo {
+  margin-right: 1rem;
+  height: 3rem;
+}
+
+.brand {
+  font-size: 2rem;
+}
+
+.upperSide {
+  padding: 2rem;
+  border-bottom: 1px solid rgb(100, 100, 100);
+  height: 50%; /* Set height to 50% */
+  width: 100%; /* Ensure it takes full width */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Apply overflow: hidden */
+}
+
+.upperSideTop {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2.5rem;
+}
+
+.addBtn {
+  height: 2rem;
+  padding-right: 1rem;
+}
+
+.midBtn {
+  background: #5A4BFF;
+  border: none;
+  color: white;
+  padding: 1rem;
+  font-size: 1.5rem;
+  width: 25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0rem;
+  border-radius: 0.5rem;
+}
+
+.query {
+  display: flex;
+  align-items: center;
+  background: transparent;
+  color: rgba(222, 222, 222, 1);
+  padding: 1.5rem;
+  width: 25rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(98, 98, 98, 1);
+  margin-bottom: 1rem;
+}
+
+.query > img {
+  margin-right: 2rem;
+  object-fit: cover;
+  height: 1.75rem;
+}
+
+.lowerSide {
+  padding: 2rem;
+  overflow-y: auto; /* Make scrollable */
+  height: 50%; /* Set height to 50% */
+  width: 100%; /* Ensure it takes full width */
+  overflow-x: hidden;
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  color: red;
+  font-size: 1.5em;
+  cursor: pointer;
+  margin-left: 10px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.sessionItem{
+  display: flex;
+}
+
+.sessionItem:hover .deleteBtn {
+  opacity: 1; /* Show the delete button on hover */
+}
+
+.sessionItem:last-of-type {
+  margin-bottom: 0; /* No margin for the last item */
+}
+
+.listItems {
+  margin: 0.75rem;
+  display: flex;
+  align-items: center;
+  font-size: 1.3rem;
+}
+
+.listitemsImg {
+  margin: 1rem;
+}
+
+.listItems:nth-child(1) > .lisitemsImg {
+  margin-right: 0.5rem;
+}
+
+.listItems:nth-child(3) > .listitemsImg {
+  margin-right: 0.7rem;
+}
+
+.chats {
+  overflow-y: auto; /* Ensure scrollable */
+  width: 110%; /* Ensure it takes full width */
+  max-width: 110rem; /* Adjusted maximum width */
+  height: calc(100vh - 9rem); /* Adjusted height to fit within the viewport */
+  padding: 1rem; /* Added padding for better spacing */
+}
+
+.chat {
+  padding: 0 2rem 2rem 2rem; /* Padding: top: 0, right: 2rem, bottom: 2rem, left: 2rem */
+  margin: 1rem 0; /* Adjust margin as needed */
+  font-size: 1.2rem;
+  text-align: justify;
+}
+
+.chatHeader {
+  font-weight: bold;
+  font-size: 2em;
+}
+
+.user {
+  width: fit-content;
+  border-radius: 0.5rem;
+  margin-left: auto; /* Push the user chat to the right */
+  margin-right: 2rem; /* Optional: Add some right margin for spacing */
+  display: flex; /* Ensure flexbox layout */
+  flex-direction: row; /* Stack child elements vertically */
+  align-items: center; /* Align child elements to the right */
+}
+
+/* .bot {
+  background: rgba(28, 30, 58, 1);
+  width: 100%;
+  border-radius: 0.5rem;
+  margin-right: 2rem;
+  display: flex;
+  align-items: center;
+} */
+/* .bot {
+  background: rgba(28, 30, 58, 1);
+  width: 100%;
+  border-radius: 0.5rem;
+  margin-right: 2rem;
+  display: flex;
+  align-items: center;
+  word-wrap: break-word; /* Ensure text wraps within the div */
+
+  .chat.bot {
+    background: rgba(28, 30, 58, 1);
+    width: 100%;
+    border-radius: 0.5rem;
+    margin-right: 2rem;
+    padding-top: 2rem;
+    display: flex;
+    align-items: flex-start; /* Align items to the top */
+  }
+  
+  .chat.bot .txt strong {
+    margin-bottom: 0.5rem; /* Optional: Adjust spacing between "Response" and <pre> */
+  }
+  
+
+  .chat.bot .txt {
+    width: 100%; /* Ensure text takes full width of its container */
+  }
+  
+  .chat.bot pre {
+    white-space: pre-wrap; /* Wrap text within the pre tag */
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+    font-size: 14px;
+   
+  }
+  
+
+
+.chatimg.t1{
+  object-fit: cover;
+  width: 3.5rem;
+  margin-right: 2rem;
+  border-radius: 5rem;
+
+}
+.chatimg.t2{
+  object-fit: cover;
+  width: fit-content;
+  height: 5rem;
+  margin-right: 2rem;
+  border-radius: 5rem;
+
+}
+
+
+.chatFooter {
+  margin-top: auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* Apply overflow: hidden */
+}
+
+/* .inp {
+  padding: 0.5rem;
+  background: rgba(28, 30, 58, 1);
+  display: flex;
+  align-items: center;
+  border-radius: 0.5rem;
+  width: 85rem;
+}
+
+.inp > input {
+  width: 98rem;
+  outline: none;
+  padding: 1.25rem;
+  color: white;
+} */
+
+
+
+/* Styles from UploadPDF.css integrated here */
+
+.upload-container {
+  margin-top: 1.2rem;
+  display: flex;
+  align-items: center;
+}
+
+.upload-btn {
+  background-color: #5A4BFF;
+  color: white;
+  padding: 1rem;
+  width: 12rem;
+  border: none;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  margin-left: 1rem; /* Adjust spacing between buttons */
+}
+
+.upload-btn:hover {
+  background-color: #463dc2;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-label {
+  background-color: #5A4BFF;
+  color: white;
+  padding: 1.3rem;
+  padding: 10px 10px 10px 21px;
+  width: 12rem;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  height: 3.57rem;
+  font-size: 1.35rem; /* Increased font size */
+}
+
+.file-label:hover {
+  background-color: #463dc2;
+}
+
+/* For WebKit-based browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+  width: 12px; /* Width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(28, 30, 58, 1); /* Background of the scrollbar track */
+  border-radius: 10px; /* Rounded corners for the track */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #5A4BFF; /* Color of the scrollbar thumb */
+  border-radius: 10px; /* Rounded corners for the thumb */
+  border: 3px solid rgba(28, 30, 58, 1); /* Adds some space around the thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #463dc2; /* Color when hovered */
+}
+
+/* For Firefox */
+html {
+  scrollbar-width: thin; /* Width of the scrollbar */
+  scrollbar-color: #5A4BFF rgba(28, 30, 58, 1); /* Color of the scrollbar thumb and track */
+}
+
+/* For Internet Explorer and Edge */
+body {
+  -ms-overflow-style: scrollbar; /* Enables scrollbar styling */
+}
+
+/* Additional styles specific to your app can follow */
+.file-names {
+  padding: 0.9rem;
+  text-align: center;
+  border-radius: 0.5rem;
+  overflow-y: auto; /* Enables vertical scrolling */
+  max-height: 17.2rem; /* Adjust as needed */
+  width: 108%;
+}
+
+.file-name {
+  display: flex;
+  flex-direction: row;
+  font-size: 1.3rem;
+  color: white;
+  align-items: center;
+}
+
+.pdfimg {
+  width: 3rem;
+  margin-right: 2rem;
+  border-radius: 0.5rem;
+}
+
+/* Spinner animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spinner {
+  border: 4px solid rgba(255, 255, 255, 0.3); /* Light grey */
+  border-top: 4px solid white; /* White */
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+}
+
+/* Styles for the send button */
+.send {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.send img {
+  width: 20px;
+  height: 20px;
+}
+
+.inp {
+  padding: 0.5rem;
+  background: rgba(28, 30, 58, 1);
+  display: flex;
+  align-items: center;
+  border-radius: 0.5rem;
+  width: 85rem;
+}
+
+.inp > input {
+  width: 98rem;
+  outline: none;
+  padding: 1.25rem;
+  color: white;
+  background: transparent;
+  border: none;
+}
+
+.inp > input,
+.send {
+  background: transparent;
+  border: none;
+}
+
+@keyframes loading-dots {
+  0%, 20% {
+    color: rgba(255, 255, 255, 0);
+    text-shadow:
+      0.25em 0 0 rgba(255, 255, 255, 0),
+      0.5em 0 0 rgba(255, 255, 255, 0);
+  }
+  40% {
+    color: white;
+    text-shadow:
+      0.25em 0 0 rgba(255, 255, 255, 0),
+      0.5em 0 0 rgba(255, 255, 255, 0);
+  }
+  60% {
+    text-shadow:
+      0.25em 0 0 white,
+      0.5em 0 0 rgba(255, 255, 255, 0);
+  }
+  80%, 100% {
+    text-shadow:
+      0.25em 0 0 white,
+      0.5em 0 0 white;
+  }
+}
+
+.upload-btn {
+  background-color: #5A4BFF;
+  color: white;
+  padding: 1rem;
+  width: 12rem;
+  height: 3.5rem; /* Adjust height to be more visually balanced */
+  border: none;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  margin-left: 1rem; /* Adjust spacing between buttons */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-size: 1.5rem; /* Adjust font size for better visibility */
+}
+
+.upload-btn:hover {
+  background-color: #463dc2;
+}
+
+.upload-btn .dots {
+  display: inline-block;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2rem; /* Increase size of the dots */
+}
+
+.upload-btn .dots span {
+  animation: loading-dots 1s infinite;
+}
+
+.upload-btn .dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.upload-btn .dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.upload-btn .dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
