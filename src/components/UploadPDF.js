@@ -20,7 +20,7 @@ const UploadPDF = ({ saveFileNames, saveEmbeddingsToIndexedDB, fileNames }) => {
 
     setIsLoading(true); // Start loading
     try {
-      const response = await axios.post('http://127.0.0.1:5000/upload_pdfs', formData);
+      const response = await axios.post('https://chatbackend-ycuv.onrender.com/upload_pdfs', formData);
       
       // Save file names
       saveFileNames(uploadedFiles.map(file => file.name));
