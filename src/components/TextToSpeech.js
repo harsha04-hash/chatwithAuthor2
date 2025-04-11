@@ -8,7 +8,7 @@ const TextToSpeech = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://127.0.0.1:5000/text_to_speech', { text });
+      const res = await axios.post('https://chatbackend-ycuv.onrender.com/text_to_speech', { text });
       setMessage(res.data.message);
     } catch (error) {
       console.error('Error converting text to speech:', error);
