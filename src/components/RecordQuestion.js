@@ -18,7 +18,7 @@ const RecordQuestion = () => {
     const formData = new FormData();
     formData.append('audio', recordedBlob.blob);
     try {
-      const res = await axios.post('http://127.0.0.1:5000/record_question', formData, {
+      const res = await axios.post('https://chatbackend-ycuv.onrender.com/record_question', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
