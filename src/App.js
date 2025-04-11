@@ -125,7 +125,7 @@ function App() {
 
   const startNewChat = async () => {
     try {
-      const response = await axios.post('http://127.0.0.1:5000/new_chat');
+      const response = await axios.post('https://chatbackend-ycuv.onrender.com/new_chat');
       const newSessionId = response.data.session_id;
       setSessionId(newSessionId);
       localStorage.setItem('session_id', newSessionId);
