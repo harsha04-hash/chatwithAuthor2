@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { openDB } from 'idb';
 import UploadPDF from './components/UploadPDF';
@@ -34,74 +34,94 @@ function App() {
   const [availableSessions, setAvailableSessions] = useState([]);
   const [fileNames, setFileNames] = useState([]);
   const [chatName, setChatName] = useState('');
-  // const [storedEmbeddings, setStoredEmbeddings] = useState(null);
 
+  // First effect: Initialize DB once on component mount
   useEffect(() => {
-    const setupDB = async () => {
-      const dbInstance = await initDB();
+    initDB().then(dbInstance => {
       setDb(dbInstance);
-
       const storedSessionId = localStorage.getItem('session_id');
       if (storedSessionId) {
         setSessionId(storedSessionId);
       }
+    });
+  }, []);
 
-      const sessions = await dbInstance.getAllFromIndex('embeddings', 'timestamp');
-      setAvailableSessions(sessions.reverse().map(s => s.sessionId));
-      if (sessionId) {
-        const storedChats = await dbInstance.getAllFromIndex('chats', 'sessionIdIndex', sessionId);
-        setPreviousChats(storedChats);
-        console.log('Loaded previous chats:', storedChats);
-
-        const storedEmbeddings = await dbInstance.get('embeddings', sessionId);
-        if (storedEmbeddings) {
-          // setStoredEmbeddings(storedEmbeddings.embeddings);
-          console.log('Loaded embeddings for session:', sessionId);
-        }
-
-        const storedFiles = await dbInstance.getAllFromIndex('files', 'sessionIdIndex', sessionId);
-        setFileNames(storedFiles.map(file => file.name));
-        console.log('Loaded file names for session:', sessionId);
-        console.log(sessions);
-        if (sessions.length > 0) {
-          setChatName(`Chat ${availableSessions.length - availableSessions.indexOf(sessionId)}`);
-        } 
+  // Second effect: When db or sessionId change, load session related data
+  useEffect(() => {
+    if (db) {
+      const loadSessionData = async () => {
+        const sessions = await db.getAllFromIndex('embeddings', 'timestamp');
+        const sessionsList = sessions.reverse().map(s => s.sessionId);
+        setAvailableSessions(sessionsList);
         
-      }
-    };
-    setupDB();
-  }, [sessionId]);
+        if (sessionId) {
+          const storedChats = await db.getAllFromIndex('chats', 'sessionIdIndex', sessionId);
+          setPreviousChats(storedChats);
+          console.log('Loaded previous chats:', storedChats);
 
-  const saveEmbeddingsToIndexedDB = async (embeddings) => {
-    if (db && sessionId) {
-      console.log("Saving new embeddings for session:", sessionId);
-      await db.put('embeddings', { sessionId, embeddings, timestamp: Date.now() });
+          const storedEmbeddings = await db.get('embeddings', sessionId);
+          if (storedEmbeddings) {
+            console.log('Loaded embeddings for session:', sessionId);
+          }
+
+          const storedFiles = await db.getAllFromIndex('files', 'sessionIdIndex', sessionId);
+          setFileNames(storedFiles.map(file => file.name));
+          console.log('Loaded file names for session:', sessionId);
+        }
+      };
+      loadSessionData();
     }
-  };
+  }, [db, sessionId]);
 
-  const saveChatToIndexedDB = async (chat) => {
-    if (db && sessionId) {
-      chat.sessionId = sessionId;
-      await db.add('chats', chat);
-      const updatedChats = await db.getAllFromIndex('chats', 'sessionIdIndex', sessionId);
-      setPreviousChats(updatedChats);
-
-      if (updatedChats.length === 1) {
-        setChatName(`Chat ${availableSessions.length - availableSessions.indexOf(sessionId)}`);
+  // Update chat name whenever availableSessions or sessionId changes
+  useEffect(() => {
+    if (sessionId && availableSessions.length > 0) {
+      const idx = availableSessions.indexOf(sessionId);
+      if (idx !== -1) {
+        setChatName(`Chat ${availableSessions.length - idx}`);
       }
     }
-  };
+  }, [availableSessions, sessionId]);
 
-  const saveFileNamesToIndexedDB = async (fileNames) => {
-    if (db && sessionId) {
-      console.log("Saving new file names for session:", sessionId);
-      for (let name of fileNames) {
-        await db.add('files', { sessionId, name });
+  const saveEmbeddingsToIndexedDB = useCallback(
+    async (embeddings) => {
+      if (db && sessionId) {
+        console.log("Saving new embeddings for session:", sessionId);
+        await db.put('embeddings', { sessionId, embeddings, timestamp: Date.now() });
       }
-      const storedFiles = await db.getAllFromIndex('files', 'sessionIdIndex', sessionId);
-      setFileNames(storedFiles.map(file => file.name));
-    }
-  };
+    },
+    [db, sessionId]
+  );
+
+  const saveChatToIndexedDB = useCallback(
+    async (chat) => {
+      if (db && sessionId) {
+        chat.sessionId = sessionId;
+        await db.add('chats', chat);
+        const updatedChats = await db.getAllFromIndex('chats', 'sessionIdIndex', sessionId);
+        setPreviousChats(updatedChats);
+
+        if (updatedChats.length === 1) {
+          setChatName(`Chat ${availableSessions.length - availableSessions.indexOf(sessionId)}`);
+        }
+      }
+    },
+    [db, sessionId, availableSessions]
+  );
+
+  const saveFileNamesToIndexedDB = useCallback(
+    async (fileNames) => {
+      if (db && sessionId) {
+        console.log("Saving new file names for session:", sessionId);
+        for (let name of fileNames) {
+          await db.add('files', { sessionId, name });
+        }
+        const storedFiles = await db.getAllFromIndex('files', 'sessionIdIndex', sessionId);
+        setFileNames(storedFiles.map(file => file.name));
+      }
+    },
+    [db, sessionId]
+  );
 
   const startNewChat = async () => {
     try {
@@ -121,24 +141,23 @@ function App() {
     }
   };
 
-  const fetchChatsForSession = async (sessionId) => {
-    if (db && sessionId) {
-      const storedChats = await db.getAllFromIndex('chats', 'sessionIdIndex', sessionId);
+  const fetchChatsForSession = async (session) => {
+    if (db && session) {
+      const storedChats = await db.getAllFromIndex('chats', 'sessionIdIndex', session);
       setPreviousChats(storedChats);
-      console.log('Loaded previous chats for session:', sessionId);
+      console.log('Loaded previous chats for session:', session);
 
-      const storedEmbeddings = await db.get('embeddings', sessionId);
+      const storedEmbeddings = await db.get('embeddings', session);
       if (storedEmbeddings) {
-        console.log('Loaded embeddings for session:', sessionId);
+        console.log('Loaded embeddings for session:', session);
       }
 
-      const storedFiles = await db.getAllFromIndex('files', 'sessionIdIndex', sessionId);
+      const storedFiles = await db.getAllFromIndex('files', 'sessionIdIndex', session);
       setFileNames(storedFiles.map(file => file.name));
-      console.log('Loaded file names for session:', sessionId);
+      console.log('Loaded file names for session:', session);
 
-      setSessionId(sessionId);
-      localStorage.setItem('session_id', sessionId);
-
+      setSessionId(session);
+      localStorage.setItem('session_id', session);
     }
   };
 
@@ -162,7 +181,7 @@ function App() {
     });
   };
 
-  const deleteSession = async (sessionId) => {
+  const deleteSession = async (session) => {
     try {
       if (db) {
         const tx = db.transaction(['embeddings', 'chats', 'files'], 'readwrite');
@@ -170,16 +189,16 @@ function App() {
         const chatsStore = tx.objectStore('chats');
         const filesStore = tx.objectStore('files');
   
-        await embeddingsStore.delete(sessionId);
+        await embeddingsStore.delete(session);
   
         const allChats = await chatsStore.getAll();
-        const sessionChats = allChats.filter(chat => chat.sessionId === sessionId);
+        const sessionChats = allChats.filter(chat => chat.sessionId === session);
         for (let chat of sessionChats) {
           await chatsStore.delete(chat.id);
         }
   
         const allFiles = await filesStore.getAll();
-        const sessionFiles = allFiles.filter(file => file.sessionId === sessionId);
+        const sessionFiles = allFiles.filter(file => file.sessionId === session);
         for (let file of sessionFiles) {
           await filesStore.delete(file.id);
         }
@@ -189,17 +208,19 @@ function App() {
         const sessions = await db.getAllFromIndex('embeddings', 'timestamp');
         setAvailableSessions(sessions.reverse().map(s => s.sessionId));
         
-        if (sessionId === localStorage.getItem('session_id')) {
+        if (session === localStorage.getItem('session_id')) {
           localStorage.removeItem('session_id');
           setSessionId(null);
           setPreviousChats([]);
           setFileNames([]);
+          setChatName('');
         }
       }
     } catch (error) {
       console.error('Error deleting session:', error);
     }
   };
+
   return (
     <div className="App">
       <div className="sideBar">
@@ -211,7 +232,11 @@ function App() {
           <button className="midBtn" onClick={startNewChat}>
             <img src={addBtn} alt="new chat" className="addBtn" />New Chat
           </button>
-          <UploadPDF saveFileNames={saveFileNamesToIndexedDB} saveEmbeddingsToIndexedDB={saveEmbeddingsToIndexedDB} fileNames={fileNames} />
+          <UploadPDF 
+            saveFileNames={saveFileNamesToIndexedDB} 
+            saveEmbeddingsToIndexedDB={saveEmbeddingsToIndexedDB} 
+            fileNames={fileNames} 
+          />
         </div>
         <div className="lowerSide">
           {availableSessions.map((id, index) => (
@@ -239,21 +264,21 @@ function App() {
               <div key={`response-${chat.id}`} className="chat bot">
                 <img className="chatimg t2" src={gptImgLogo} alt="GPT Logo" />
                 <div className="txt">
-                  <strong>Response</strong> <pre>{chat.response}</pre>
+                  <strong>Response:</strong> <pre>{chat.response}</pre>
                 </div>
               </div>
             </div>
           ))}
         </div>
         <div className="chatFooter">
-        {sessionId && (
-          <AskQuestion
-            sessionId={sessionId}
-            saveChat={saveChatToIndexedDB}
-            addQuestionToChat={addQuestionToChat}
-            fetchEmbeddings={fetchEmbeddingsFromIndexedDB}
-          />
-        )}
+          {sessionId && (
+            <AskQuestion
+              sessionId={sessionId}
+              saveChat={saveChatToIndexedDB}
+              addQuestionToChat={addQuestionToChat}
+              fetchEmbeddings={fetchEmbeddingsFromIndexedDB}
+            />
+          )}
         </div>
       </div>
     </div>
