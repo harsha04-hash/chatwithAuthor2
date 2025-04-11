@@ -23,7 +23,7 @@ const AskQuestion = ({ sessionId, saveChat, addQuestionToChat, fetchEmbeddings }
 
     try {
       const embeddings = await fetchEmbeddings();
-      const res = await axios.post('https://chatbackend-ycuv.onrender.com/ask_question/ask_question', {
+      const res = await axios.post('https://chatbackend-ycuv.onrender.com/ask_question', {
         question: currentQuestion,
         session_id: sessionId,
         embeddings: embeddings,
