@@ -1,22 +1,21 @@
 {
-  "name": "chat-application",
+  "name": "chatauthor",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
-    "axios": "^1.7.2",
-    "idb": "^8.0.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-mic": "^12.4.6",
+    "axios": "^1.8.4",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "npm install --legacy-peer-deps && react-scripts build",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
