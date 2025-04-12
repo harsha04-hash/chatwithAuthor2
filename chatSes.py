@@ -46,27 +46,7 @@ def get_text_chunks(text):
     return chunks
 
 # def get_vector_store(text_chunks):
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-    print("Generated embeddings for text chunks: ", embeddings)
-    vector_store = FAISS.from_texts(text_chunks, embedding=embeddings)
-    # Serialize the FAISS index to bytes
-    print(vector_store)
-    faiss_bytes = vector_store.serialize_to_bytes()
-    faiss_base64 = base64.b64encode(faiss_bytes).decode('utf-8')
-    faiss_json = {
-    "faiss_index": faiss_base64
-    }
-    faiss_json = json.loads(faiss_json)
-
-    # Decode the Base64 string back to bytes
-    faiss_bytes = base64.b64decode(faiss_json["faiss_index"])
-
-    # Deserialize the bytes back to a FAISS object
-    vector_store_deserialized = FAISS.deserialize_from_bytes(faiss_bytes)
-
-    # Verify the deserialization
-    print(vector_store_deserialized)
-    return vector_store
+   #
 def get_vector_store(text_chunks):
     # Define the embeddings
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
